@@ -1,0 +1,37 @@
+#1
+Ghaodiya parnu ghare lai javanu ghee 340000 man Matushri Nirmala Devchand doshi
+
+#2
+Chintamani dada ni pakshal puja nu ghee 504 man Madhuben Narendra Doshi
+
+#3
+Supan 3ju Sinh ne ne Sonani mal paheravavanu ghee 17000 man Harkhlal Masukhlal Dhingra Adhoi parivar 
+
+#4
+Vahanne mathe lai ne padhravaanu ghee 15004 man Jyoti Ashwhin Doshi
+
+#5
+Aso vad in Oli ni aradhna 36000 rupiya Rakesh Jayshuk Patva 
+
+#6
+Parmatmana janm pachi Dugdugi vagadvanu ghee 5001 rupiya Nirmal Rajubah Shah
+
+
+#7
+Nutan Dikshit ne kamli odhadhvanu ghee 500000 rupiya Jignesh Shubhash satra 
+
+
+INSERT INTO public.ledgers (
+    ledger_name,
+    contact_person,
+    mobile,
+    created,
+    modified
+)
+VALUES (
+    'નિર્મળા બેન દેવચંદ દોશી',
+    'Mehul',
+    '9876543210',
+    NOW(),
+    NOW()
+);
