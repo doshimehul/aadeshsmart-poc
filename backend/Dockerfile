@@ -13,8 +13,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the FastAPI application from the repository's backend directory.
 COPY backend/ .
 
-COPY alembic.ini .
-
 # Create directory for uploaded recordings
 RUN mkdir -p /app/uploads
 
