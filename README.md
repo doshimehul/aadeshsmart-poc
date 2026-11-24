@@ -66,6 +66,16 @@ alembic upgrade head
 
 Confirm `DATABASE_URL` points to the intended AadeshSmart project database before applying migrations. The migration does not modify any external donor database.
 
+## Seed ledger names
+
+After applying the migration, load the names from `ledger_seed.csv` into the `ledgers` table:
+
+```bash
+python backend/scripts/seed_ledger.py
+```
+
+The seeder can read another CSV path as its optional argument. It skips ledger names that already exist, so rerunning it does not create duplicate rows or overwrite existing contact details.
+
 ## Recording processing
 
 Uploads are processed by one FastAPI background task. Development defaults to mock Sarvam and Gemini providers; set `SARVAM_MODE=live` and/or `GEMINI_MODE=live` with `SARVAM_API_KEY` and `GOOGLE_API_KEY` to use the real providers. Provider timeouts and the Gemini model are configurable in `.env`.
