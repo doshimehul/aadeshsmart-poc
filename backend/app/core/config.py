@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 from typing import Annotated
 
 from pydantic import Field, PostgresDsn, field_validator
@@ -20,7 +21,12 @@ class Settings(BaseSettings):
     gemini_model: str = "gemini-3.8-flash"
     gemini_timeout_seconds: float = Field(default=45, gt=0)
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=False, extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=Path(__file__).resolve().parents[3] / ".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra="ignore",
+    )
 
     @field_validator("cors_origins", mode="before")
     @classmethod
