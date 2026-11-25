@@ -5,6 +5,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPExcepti
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.core.config import get_settings
 from app.db.session import get_db
 from app.models.recording import Recording
 from app.repositories.recording_repository import RecordingRepository
@@ -54,7 +55,7 @@ class RecordingResponse(BaseModel):
 
 
 def get_recording_service(session: Session = Depends(get_db)) -> RecordingService:
-    return RecordingService(RecordingRepository(session), LocalRecordingStorage())
+    return RecordingService(RecordingRepository(session), LocalRecordingStorage(get_settings().recordings_dir))
 
 
 @router.post("", response_model=RecordingResponse, status_code=201)

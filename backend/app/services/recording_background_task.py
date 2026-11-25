@@ -10,9 +10,10 @@ logger = logging.getLogger(__name__)
 
 def process_recording_background(recording_id: UUID, *, already_claimed: bool = False) -> None:
     """FastAPI BackgroundTasks entry point; processing logic lives in the service."""
+    settings = get_settings()
     session = SessionLocal()
     try:
-        RecordingProcessingService(session, get_settings()).process(
+        RecordingProcessingService(session, settings, storage_root=settings.recordings_dir).process(
             recording_id, already_claimed=already_claimed
         )
     except Exception:

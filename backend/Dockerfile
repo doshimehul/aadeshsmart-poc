@@ -13,8 +13,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the FastAPI application from the repository's backend directory.
 COPY backend/ .
 
-# Create directory for uploaded recordings
-RUN mkdir -p /app/uploads
+# Keep the image, API uploads, background processor, and mounted volume on one path.
+ENV RECORDINGS_DIR=/app/storage/recordings
+RUN mkdir -p /app/storage/recordings
 
 # FastAPI application port
 EXPOSE 8000

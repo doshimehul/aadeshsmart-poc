@@ -9,6 +9,7 @@ from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "AadeshSmart API"
     database_url: PostgresDsn = "postgresql+psycopg://postgres:postgres@localhost:5432/aadeshsmart"
+    recordings_dir: Path = Path("storage/recordings")
     cors_origins: Annotated[list[str], NoDecode] = Field(
         default_factory=lambda: ["http://localhost:3000", "http://127.0.0.1:3000"]
     )
