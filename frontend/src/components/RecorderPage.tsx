@@ -190,11 +190,14 @@ export default function RecordingsPage() {
   const needsAttentionCount = recordings.filter((recording) => recording.background_job_status === "failed").length;
   return <main className="workspace-page">
     <header className="page-heading">
-      <div><span className="eyebrow">EVENT WORKSPACE</span><h1>Event recordings</h1><p>Capture announcements and review AI-generated details.</p></div>
+      <div><span className="eyebrow">Shree Pantnagar Sangh</span>
+      <p>શ્રી ઘાટકોપર જૈન શ્વે. મુ તપા. સંઘ, ચિંતામણી પાર્શ્વનાથ જિનાલય પંતનગર  </p>
+      <h2>Aadesh Announcements </h2>
+      </div>
       <div className="workspace-stats" aria-label="Recording summary"><div><strong>{recordings.length}</strong><span>Listed</span></div><div><strong>{processedCount}</strong><span>Processed</span></div><div><strong>{needsAttentionCount}</strong><span>Needs attention</span></div></div>
     </header>
     <section className="recordings-section" aria-labelledby="recordings-title">
-      <div className="section-title"><div><h2 id="recordings-title">Recent recordings</h2><p>Transcripts, extracted details and donor matches.</p></div><span className="record-count">{recordings.length}</span></div>
+      <div className="section-title"><div><h2 id="recordings-title">Recent Announcements</h2><p>Transcripts, extracted details and donor matches.</p></div><span className="record-count">{recordings.length}</span></div>
       {listError && <p className="list-error" role="alert">{listError}</p>}
       {!listError && recordings.length === 0 ? <div className="recordings-empty">Your recordings will appear here after upload.</div> : <div className="recordings-list">{recordings.map((item, index) => {
         const candidates = item.matching_candidates || [];
