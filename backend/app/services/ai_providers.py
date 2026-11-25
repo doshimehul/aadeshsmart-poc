@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+from pathlib import Path
 from typing import Literal, Protocol
 
 from pydantic import BaseModel, Field
@@ -50,7 +51,7 @@ class DonationExtraction(BaseModel):
 
 
 class TranscriptionProvider(Protocol):
-    def transcribe(self, audio_path: str) -> str: ...
+    def transcribe(self, audio_path: str, mime_type: str | None = None) -> str: ...
 
 
 class ExtractionProvider(Protocol):
@@ -58,7 +59,7 @@ class ExtractionProvider(Protocol):
 
 
 class MockTranscriptionProvider:
-    def transcribe(self, audio_path: str) -> str:
+    def transcribe(self, audio_path: str, mime_type: str | None = None) -> str:
         return "માતુ શ્રી નિર્મળા બેન દેવચંદ દોશી તરફથી એક હજાર એક મણ ઘીનું દાન."
 
 
@@ -66,9 +67,16 @@ class SarvamTranscriptionProvider:
     def __init__(self, settings: Settings):
         self.settings = settings
 
-    def transcribe(self, audio_path: str) -> str:
+    def transcribe(self, audio_path: str, mime_type: str | None = None) -> str:
         if not self.settings.sarvam_api_key:
             raise RuntimeError("Sarvam live mode requires SARVAM_API_KEY")
+        full_path = str(Path(audio_path).expanduser().resolve())
+        file_name = Path(full_path).name
+        file_extension = Path(full_path).suffix.lower()
+        logger.info(
+            "Sarvam transcription request starting: file_name=%s file_path=%s file_extension=%s mime_type=%s",
+            file_name, full_path, file_extension or "unknown", mime_type or "unknown",
+        )
         try:
             from sarvamai import SarvamAI
 
@@ -86,7 +94,10 @@ class SarvamTranscriptionProvider:
             return transcript
         except Exception as exc:
             details = _sarvam_error_details(exc)
-            logger.exception("Sarvam transcription request failed: error_type=%s %s", type(exc).__name__, details)
+            logger.exception(
+                "Sarvam transcription request failed: file_name=%s file_path=%s file_extension=%s mime_type=%s error_type=%s %s",
+                file_name, full_path, file_extension or "unknown", mime_type or "unknown", type(exc).__name__, details,
+            )
             raise RuntimeError(f"Sarvam transcription failed ({type(exc).__name__}): {details}") from None
 
 

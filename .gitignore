@@ -16,3 +16,4 @@ frontend/.env.*.local
 .DS_Store
 storage/
 postgresql+psycopg:/
+commands

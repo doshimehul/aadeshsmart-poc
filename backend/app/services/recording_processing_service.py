@@ -24,8 +24,8 @@ class TranscriptionService:
     def __init__(self, settings: Settings):
         self._provider = MockTranscriptionProvider() if settings.sarvam_mode.lower() == "mock" else SarvamTranscriptionProvider(settings)
 
-    def transcribe(self, audio_path: str) -> str:
-        return self._provider.transcribe(audio_path)
+    def transcribe(self, audio_path: str, mime_type: str | None = None) -> str:
+        return self._provider.transcribe(audio_path, mime_type)
 
 
 class ExtractionService:
@@ -85,7 +85,7 @@ class RecordingProcessingService:
     def _run_transcription(self, recording: Recording) -> None:
         self._set_stage(recording.recording_id, RecordingStatus.TRANSCRIBING)
         audio_path = self._storage_root / recording.file_name
-        transcript = self._transcription.transcribe(str(audio_path))
+        transcript = self._transcription.transcribe(str(audio_path), recording.mime_type)
         if not transcript.strip():
             raise ValueError("Transcription provider returned empty text")
         self._repository.persist_transcript(recording.recording_id, transcript)
