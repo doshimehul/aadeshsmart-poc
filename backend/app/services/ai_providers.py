@@ -1,8 +1,45 @@
+import json
+import logging
+import re
 from typing import Literal, Protocol
 
 from pydantic import BaseModel, Field
 
 from app.core.config import Settings
+
+logger = logging.getLogger(__name__)
+
+
+def _sarvam_error_details(exc: Exception) -> str:
+    """Build bounded, credential-conscious diagnostics from SDK/httpx errors."""
+    details: list[str] = []
+    response = getattr(exc, "response", None)
+    status = getattr(exc, "status_code", None) or getattr(response, "status_code", None)
+    if status is not None:
+        details.append(f"http_status={status}")
+    request_id = None
+    headers = getattr(response, "headers", None)
+    if headers:
+        request_id = headers.get("x-request-id") or headers.get("request-id") or headers.get("x-correlation-id")
+    request_id = request_id or getattr(exc, "request_id", None)
+    if request_id:
+        details.append(f"request_id={str(request_id)[:200]}")
+
+    body = getattr(exc, "body", None)
+    if body is None and response is not None:
+        try:
+            body = response.text
+        except Exception:
+            body = None
+    if body is not None:
+        if not isinstance(body, str):
+            try:
+                body = json.dumps(body, ensure_ascii=False, default=str)
+            except Exception:
+                body = str(body)
+        body = re.sub(r'(?i)("?(?:api[_-]?key|authorization|token|secret|password)"?\s*[:=]\s*"?)[^",}\s]+', r'\1[REDACTED]', body)
+        details.append(f"response_body={body[:2000]}")
+    return " ".join(details) or "no HTTP response details available"
 
 
 class DonationExtraction(BaseModel):
@@ -48,7 +85,9 @@ class SarvamTranscriptionProvider:
                 raise ValueError("Sarvam returned an empty transcription")
             return transcript
         except Exception as exc:
-            raise RuntimeError(f"Sarvam transcription failed ({type(exc).__name__})") from None
+            details = _sarvam_error_details(exc)
+            logger.exception("Sarvam transcription request failed: error_type=%s %s", type(exc).__name__, details)
+            raise RuntimeError(f"Sarvam transcription failed ({type(exc).__name__}): {details}") from None
 
 
 class MockExtractionProvider:
